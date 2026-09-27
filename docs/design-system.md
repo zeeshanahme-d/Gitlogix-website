@@ -57,6 +57,9 @@ Clash Display ships a narrow word space, so every display style adds `word-spaci
   - `TechStack` adds blank filler cells so the last row never shows a grey gap.
   - The client wall has 13 logos plus one "Your product next?" cell, so every row is full at 2, 3 and 5 columns. Recheck this if you add or remove clients.
 - **Shadows:** `shadow-sm` only, and only for things that sit on top of something else (popups inside the service sketches, the map label).
+- **Scrollbar:**
+  - `html` always reserves the scrollbar's width (`overflow-y: scroll`), so switching between short and long pages never shifts the layout. `scrollbar-gutter: stable` isn't used: Chrome ignores it on the root when nothing overflows.
+  - Chromium and Safari draw a slim rounded thumb with `::-webkit-scrollbar` (12px gutter, grey thumb that darkens on hover). Firefox gets `scrollbar-width: thin` with the same grey.
 
 ## Motion
 

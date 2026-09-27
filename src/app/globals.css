@@ -131,7 +131,49 @@
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
     background-color: var(--color-bg);
-    scrollbar-color: var(--color-line-strong) var(--color-bg);
+    /*
+     * Always reserve the scrollbar's space, so pages never shift sideways
+     * when content becomes (or stops being) tall enough to scroll. On a page
+     * that fits, the gutter stays empty (the track is transparent).
+     * `scrollbar-gutter: stable` alone is not enough: Chrome ignores it on
+     * the root element in standards mode when nothing overflows.
+     */
+    overflow-y: scroll;
+  }
+
+  /*
+   * Custom scrollbar. Chromium and Safari get a slim rounded thumb, inset
+   * by a transparent border, that darkens on hover. Chromium ignores these
+   * rules once scrollbar-color or scrollbar-width is set, so the standard
+   * properties are applied only where ::-webkit-scrollbar is unsupported
+   * (Firefox).
+   */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--color-fg) 22%, transparent);
+    background-clip: padding-box;
+    border: 3px solid transparent;
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--color-fg) 40%, transparent);
+  }
+
+  @supports not selector(::-webkit-scrollbar) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in srgb, var(--color-fg) 22%, transparent) transparent;
+    }
   }
 
   body {
