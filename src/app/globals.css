@@ -1,26 +1,178 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Gitlogix design tokens. Light, neutral (zinc) theme with the brand orange
+ * as the single accent. Rules: docs/design-system.md.
+ */
+@theme {
+  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-clash), var(--font-satoshi), ui-sans-serif, sans-serif;
+
+  --color-bg: #ffffff;
+  --color-surface: #fafafa;
+  --color-surface-2: #f4f4f5;
+  --color-surface-3: #e4e4e7;
+  --color-line: #e4e4e7;
+  --color-line-strong: #d4d4d8;
+  --color-fg: #18181b;
+  --color-fg-2: #52525b;
+  --color-muted: #6b6b74;
+  /* Brand orange for fills and marks; brand-ink is the same hue dark enough for text on white (4.9:1). */
+  --color-brand: #ff8c21;
+  --color-brand-2: #ffe040;
+  --color-brand-ink: #b85300;
+  --color-on-brand: #120a02;
+  --color-success: #15803d;
+  --color-danger: #dc2626;
+
+  --radius-control: 0.5rem;
+  --radius-card: 0.75rem;
+
+  --container-page: 80rem;
+  --container-narrow: 56rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/*
+ * The footer keeps the original dark treatment. Wrapping it in .theme-dark
+ * swaps the tokens, so its own markup stays unchanged.
+ */
+.theme-dark {
+  color-scheme: dark;
+  --color-bg: #08080b;
+  --color-surface: #0f0f14;
+  --color-surface-2: #16161d;
+  --color-surface-3: #1e1e27;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-fg: #f5f5f7;
+  --color-fg-2: #a6a6b2;
+  --color-muted: #82828f;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Hero load: a short fade and lift, staggered by --delay (ms). Skipped under reduced motion. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 8px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility animate-rise {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: rise 300ms ease-out both;
+    animation-delay: calc(var(--delay, 0) * 1ms);
+  }
+}
+
+/* ---------- Type scale (fluid 375px -> 1440px) ---------- */
+@utility type-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 1.7rem + 3.4vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  word-spacing: 0.1em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+@utility type-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.008em;
+  word-spacing: 0.1em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+@utility type-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.6rem + 1.6vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.006em;
+  word-spacing: 0.09em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+@utility type-h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
+  line-height: 1.2;
+  word-spacing: 0.08em;
+  font-weight: 600;
+}
+
+@utility type-lead {
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+@utility measure {
+  max-width: 62ch;
+}
+
+@utility section-y {
+  padding-block: 4.5rem;
+
+  @media (width >= 64rem) {
+    padding-block: 6rem;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    background-color: var(--color-bg);
+    scrollbar-color: var(--color-line-strong) var(--color-bg);
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .font-display {
+    word-spacing: 0.08em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-ink);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .theme-dark :focus-visible {
+    outline-color: var(--color-brand);
+  }
+
+  ::selection {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
