@@ -10,7 +10,7 @@ It has three pages: **Home**, **About** and **Contact** (a project enquiry form)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com). Design tokens live in `src/app/globals.css`.
 - **Fonts:** Clash Display and Satoshi from [Fontshare](https://www.fontshare.com), self-hosted with `next/font/local`
 - **Icons:** [Phosphor Icons](https://phosphoricons.com) for the interface, and [Simple Icons](https://simpleicons.org) for technology and platform logos
-- **Contact form:** a Next.js Server Action that posts each enquiry to a webhook
+- **Contact form:** a Next.js Server Action that validates each enquiry. Sending is not wired up yet (see below).
 
 ## Getting started
 
@@ -30,22 +30,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run start` | Serve the production build |
 | `npm run lint` | Run ESLint |
 
-## Environment variables
+## Contact form
 
-Create a `.env.local` file in the project root (it is git-ignored):
-
-```bash
-# Where contact form enquiries are sent, as a JSON POST.
-# Works with a Slack incoming webhook, Zapier, Make or any HTTP endpoint.
-CONTACT_WEBHOOK_URL=https://hooks.slack.com/services/...
-```
-
-The request body contains `text` (a formatted summary) plus `name`, `email`, `company`, `projectType` and `message`.
-
-If `CONTACT_WEBHOOK_URL` is not set:
-
-- **In development,** submitted messages are printed to the terminal instead of being sent.
-- **In production,** the form shows an error and asks the visitor to email support@gitlogix.com, so no enquiry is silently lost.
+The form validates every field on the server and shows a success message, but **it does not send the enquiry anywhere yet**. Submitted messages are dropped. Add delivery (email or a webhook) in `src/app/contact/actions.ts` at the marked line before launch.
 
 ## Project structure
 
@@ -82,7 +69,7 @@ Common updates:
 
 ## Before launch
 
-- [ ] Set `CONTACT_WEBHOOK_URL` in the hosting environment and send a test enquiry.
+- [ ] Make the contact form send enquiries (email or webhook), then send a test enquiry.
 - [ ] Replace the sample testimonials. Only publish real quotes that clients have approved.
 - [ ] Replace the four sample projects with real case studies, and add screenshots.
 - [ ] Add the real team (names, roles, photos).
@@ -95,7 +82,7 @@ The site uses a light, neutral design with the brand orange as its only accent, 
 
 ## Deployment
 
-The site is fully static apart from the contact form's server action, so it runs on any Next.js host. The simplest option is [Vercel](https://vercel.com/new): import this repository, add `CONTACT_WEBHOOK_URL` under **Settings → Environment Variables**, and deploy.
+The site is fully static apart from the contact form's server action, so it runs on any Next.js host. The simplest option is [Vercel](https://vercel.com/new): import this repository and deploy.
 
 ## Credits and licences
 

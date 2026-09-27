@@ -1,6 +1,6 @@
 "use server";
 
-import { company, contactPage } from "@/content/site";
+import { contactPage } from "@/content/site";
 
 export type ContactField = "name" | "email" | "company" | "projectType" | "message";
 
@@ -19,9 +19,9 @@ function read(formData: FormData, key: string) {
 }
 
 /**
- * Delivers enquiries to CONTACT_WEBHOOK_URL as JSON (Slack, Zapier, Make or
- * any HTTP endpoint). Without it, development logs the message and
- * production reports a failure instead of silently dropping the lead.
+ * Validates an enquiry and reports success.
+ * ponytail: enquiries are NOT delivered anywhere yet (temporary). Before launch,
+ * send `values` by email or to a webhook where marked below.
  */
 export async function sendContactMessage(_prev: ContactState, formData: FormData): Promise<ContactState> {
   // Honeypot: real visitors never see or fill this field.
@@ -50,43 +50,7 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
     return { status: "error", message: "Check the highlighted fields and try again.", errors, values };
   }
 
-  const webhook = process.env.CONTACT_WEBHOOK_URL;
-  const text = [
-    `New enquiry from ${values.name} <${values.email}>`,
-    values.company && `Company: ${values.company}`,
-    values.projectType && `Project: ${values.projectType}`,
-    "",
-    values.message,
-  ]
-    .filter((line) => line !== "")
-    .join("\n");
-
-  if (webhook) {
-    try {
-      const response = await fetch(webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, ...values }),
-      });
-      if (!response.ok) throw new Error(`Webhook responded with ${response.status}`);
-    } catch (error) {
-      console.error("[contact] delivery failed", error);
-      return deliveryFailed(values);
-    }
-  } else if (process.env.NODE_ENV === "production") {
-    console.error("[contact] CONTACT_WEBHOOK_URL is not set; enquiry not delivered.");
-    return deliveryFailed(values);
-  } else {
-    console.info(`[contact] CONTACT_WEBHOOK_URL is not set. Development only, message not sent:\n${text}`);
-  }
+  // Delivery goes here (email or webhook). Until then the message is dropped.
 
   return { status: "success", values: { name: values.name, email: values.email } };
-}
-
-function deliveryFailed(values: ContactState["values"]): ContactState {
-  return {
-    status: "error",
-    message: `Your message could not be sent. Email us at ${company.email} and we will reply from there.`,
-    values,
-  };
 }
