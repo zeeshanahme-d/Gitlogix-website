@@ -118,7 +118,7 @@ export function SiteFooter() {
       </Container>
 
       {/* Oversized wordmark that bleeds off the bottom edge. */}
-      <div aria-hidden className="pointer-events-none mb-[-4vw] select-none overflow-hidden px-2">
+      <div aria-hidden className="pointer-events-none mb-[-2vw] select-none overflow-hidden px-2">
         <p className="bg-linear-to-b from-white/9 to-transparent bg-clip-text text-center font-display text-[21vw] leading-[0.8] font-semibold tracking-[-0.04em] text-transparent">
           GITLOGIX
         </p>
